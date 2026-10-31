@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { AuthService } from '../services/auth.service';
 import { useAuth } from '../context/useAuth';
+import { obtenerMensajeError } from '../utils/error';
 import { Lock, Mail, User, Phone } from 'lucide-react';
 
 type AuthFormValues = {
@@ -11,13 +11,6 @@ type AuthFormValues = {
   correo: string;
   contrasena: string;
   telefono?: string;
-};
-
-const obtenerMensajeError = (error: unknown): string => {
-  if (axios.isAxiosError<{ mensaje?: string }>(error)) {
-    return error.response?.data?.mensaje ?? 'No se pudo conectar con el servidor';
-  }
-  return 'Ocurrió un error inesperado';
 };
 
 export default function AuthPage() {

@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider } from './context/AuthContext';
 import { useAuth } from './context/useAuth';
 import AuthPage from './pages/AuthPage';
+import DashboardPage from './pages/DashboardPage';
 
 // Componente para proteger la ruta del Dashboard
 const ProtectedRoute = ({ children }: { children: ReactNode }) => {
@@ -10,29 +11,28 @@ const ProtectedRoute = ({ children }: { children: ReactNode }) => {
   return isAuthenticated ? children : <Navigate to="/auth" replace />;
 };
 
-// Componente temporal del Dashboard mientras lo construimos
-const DashboardPlaceholder = () => (
-  <div className="flex min-h-screen flex-col items-center justify-center bg-slate-900 text-white">
-    <h1 className="text-3xl font-bold text-indigo-400">Dashboard de Facturas</h1>
-    <p className="mt-2 text-slate-400">¡Sesión iniciada correctamente!</p>
-  </div>
-);
+// Redirige la raíz según el estado de la sesión
+const RootRedirect = () => {
+  const { isAuthenticated } = useAuth();
+  return <Navigate to={isAuthenticated ? '/dashboard' : '/auth'} replace />;
+};
 
 export default function App() {
   return (
     <AuthProvider>
       <Router>
         <Routes>
+          <Route path="/" element={<RootRedirect />} />
           <Route path="/auth" element={<AuthPage />} />
           <Route
             path="/dashboard"
             element={
               <ProtectedRoute>
-                <DashboardPlaceholder />
+                <DashboardPage />
               </ProtectedRoute>
             }
           />
-          <Route path="*" element={<Navigate to="/auth" replace />} />
+          <Route path="*" element={<RootRedirect />} />
         </Routes>
       </Router>
     </AuthProvider>
